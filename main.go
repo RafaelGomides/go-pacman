@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"go-pacMan/game"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -12,90 +13,11 @@ import (
 	"github.com/buger/goterm"
 )
 
-// GameStatus é a estrutura do jogo em execução
-type GameStatus struct {
-	DotsInGrid int
-	Grid       [][]string
-	GridLen    struct {
-		x int
-		y int
-	}
-	PlayerPos struct {
-		x int
-		y int
-	}
-	Points int
-}
-
-func (g *GameStatus) checkIfHasDot(x, y int) {
-	if g.Grid[x][y] == "." {
-		g.Points++
-		g.DotsInGrid--
-	}
-}
-
-// Up movimenta o personagem para cima
-func (g *GameStatus) Up() {
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
-	if g.PlayerPos.x-1 >= 0 {
-		g.PlayerPos.x--
-	} else {
-		g.PlayerPos.x = g.GridLen.x - 1
-	}
-	g.checkIfHasDot(g.PlayerPos.x, g.PlayerPos.y)
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = "V"
-}
-
-// Down movimenta o personagem para baixo
-func (g *GameStatus) Down() {
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
-	if g.PlayerPos.x+1 < g.GridLen.x {
-		g.PlayerPos.x++
-	} else {
-		g.PlayerPos.x = 0
-	}
-	g.checkIfHasDot(g.PlayerPos.x, g.PlayerPos.y)
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = "A"
-}
-
-// Left movimenta o personagem para esquerda
-func (g *GameStatus) Left() {
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
-	if g.PlayerPos.y-1 >= 0 {
-		g.PlayerPos.y--
-	} else {
-		g.PlayerPos.y = g.GridLen.y - 1
-	}
-	g.checkIfHasDot(g.PlayerPos.x, g.PlayerPos.y)
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = ">"
-}
-
-// Right movimenta o personagem para direita
-func (g *GameStatus) Right() {
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
-	if g.PlayerPos.y+1 < g.GridLen.y {
-		g.PlayerPos.y++
-	} else {
-		g.PlayerPos.y = 0
-	}
-	g.checkIfHasDot(g.PlayerPos.x, g.PlayerPos.y)
-	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = "<"
-}
-
-func (g *GameStatus) generateManStartPosition() {
+func getGridMap(x, y int) *game.GameStatus {
 	rand.Seed(time.Now().UnixNano())
-	xPos := rand.Intn(g.GridLen.x - 1)
-	yPos := rand.Intn(g.GridLen.y - 1)
-	g.Grid[yPos][xPos] = "O"
-	g.PlayerPos.x = xPos
-	g.PlayerPos.y = yPos
-}
-
-func getGridMap(x, y int) *GameStatus {
-	rand.Seed(time.Now().UnixNano())
-	newGame := GameStatus{}
-	newGame.GridLen.x = x
-	newGame.GridLen.y = y
+	newGame := game.GameStatus{}
+	newGame.GridLen.X = x
+	newGame.GridLen.Y = y
 	for iy := 0; iy < y; iy++ {
 		row := []string{}
 		for ix := 0; ix < x; ix++ {
@@ -110,12 +32,12 @@ func getGridMap(x, y int) *GameStatus {
 		newGame.Grid = append(newGame.Grid, row)
 	}
 
-	newGame.generateManStartPosition()
+	newGame.GenerateManStartPosition()
 
 	return &newGame
 }
 
-func playGame(game *GameStatus) string {
+func playGame(game *game.GameStatus) string {
 	userOption := bufio.NewReader(os.Stdin)
 
 	for game.DotsInGrid > 1 {
@@ -130,13 +52,13 @@ func playGame(game *GameStatus) string {
 		fmt.Println(opt)
 		switch opt {
 		case "D\n":
-			game.Right()
+			game.PacRight()
 		case "C\n":
-			game.Up()
+			game.PacUp()
 		case "B\n":
-			game.Down()
+			game.PacDown()
 		case "E\n":
-			game.Left()
+			game.PacLeft()
 		default:
 			fmt.Println("Informe uma opção valida")
 			time.Sleep(time.Second * 1)
