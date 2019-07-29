@@ -8,8 +8,11 @@ import (
 	"os/exec"
 	"strconv"
 	"time"
+
+	"github.com/buger/goterm"
 )
 
+// GameStatus é a estrutura do jogo em execução
 type GameStatus struct {
 	DotsInGrid int
 	Grid       [][]string
@@ -31,6 +34,7 @@ func (g *GameStatus) checkIfHasDot(x, y int) {
 	}
 }
 
+// Up movimenta o personagem para cima
 func (g *GameStatus) Up() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
 	if g.PlayerPos.x-1 >= 0 {
@@ -42,6 +46,7 @@ func (g *GameStatus) Up() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = "V"
 }
 
+// Down movimenta o personagem para baixo
 func (g *GameStatus) Down() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
 	if g.PlayerPos.x+1 < g.GridLen.x {
@@ -53,6 +58,7 @@ func (g *GameStatus) Down() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = "A"
 }
 
+// Left movimenta o personagem para esquerda
 func (g *GameStatus) Left() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
 	if g.PlayerPos.y-1 >= 0 {
@@ -64,6 +70,7 @@ func (g *GameStatus) Left() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = ">"
 }
 
+// Right movimenta o personagem para direita
 func (g *GameStatus) Right() {
 	g.Grid[g.PlayerPos.x][g.PlayerPos.y] = " "
 	if g.PlayerPos.y+1 < g.GridLen.y {
@@ -79,7 +86,7 @@ func (g *GameStatus) generateManStartPosition() {
 	rand.Seed(time.Now().UnixNano())
 	xPos := rand.Intn(g.GridLen.x - 1)
 	yPos := rand.Intn(g.GridLen.y - 1)
-	g.Grid[xPos][yPos] = "O"
+	g.Grid[yPos][xPos] = "O"
 	g.PlayerPos.x = xPos
 	g.PlayerPos.y = yPos
 }
@@ -109,7 +116,6 @@ func getGridMap(x, y int) *GameStatus {
 }
 
 func playGame(game *GameStatus) string {
-
 	userOption := bufio.NewReader(os.Stdin)
 
 	for game.DotsInGrid > 1 {
@@ -142,16 +148,22 @@ func playGame(game *GameStatus) string {
 }
 
 func main() {
+	xLen := 0
+	yLen := 0
 
-	if len(os.Args[1:]) == 0 {
-		fmt.Println("Insira os argumentos para o funcionamento da aplicação")
-		return
+	if args := os.Args[1:]; len(args) == 0 {
+		yLen = goterm.Height() - 7
+		xLen = goterm.Width() / 2
+	} else {
+		xLen, _ = strconv.Atoi(args[0])
+		yLen, _ = strconv.Atoi(args[1])
 	}
 
-	args := os.Args[1:]
-	xLen, _ := strconv.Atoi(args[0])
-	yLen, _ := strconv.Atoi(args[1])
+	fmt.Println(xLen, yLen)
+
+	c := exec.Command("clear")
+	c.Stdout = os.Stdout
+	c.Run()
 
 	fmt.Println(playGame(getGridMap(xLen, yLen)))
-
 }
