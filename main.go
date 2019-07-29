@@ -11,7 +11,6 @@ import (
 )
 
 type GameStatus struct {
-	Direction  string
 	DotsInGrid int
 	Grid       [][]string
 	GridLen    struct {
@@ -125,16 +124,12 @@ func playGame(game *GameStatus) string {
 		fmt.Println(opt)
 		switch opt {
 		case "D\n":
-			game.Direction = "D"
 			game.Right()
 		case "C\n":
-			game.Direction = "C"
 			game.Up()
 		case "B\n":
-			game.Direction = "B"
 			game.Down()
 		case "E\n":
-			game.Direction = "E"
 			game.Left()
 		default:
 			fmt.Println("Informe uma opção valida")
