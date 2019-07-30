@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"go-pacMan/game"
 	"math/rand"
@@ -38,32 +37,9 @@ func getGridMap(x, y int) *game.GameStatus {
 }
 
 func playGame(game *game.GameStatus) string {
-	userOption := bufio.NewReader(os.Stdin)
 
-	for game.DotsInGrid > 1 {
-		c := exec.Command("clear")
-		c.Stdout = os.Stdout
-		fmt.Printf("PONTOS: %v\n", game.Points)
-		for _, line := range game.Grid {
-			fmt.Printf("%v\n", line)
-		}
-		fmt.Print("Use:\n D Para virar para Direita\n C Para virar para Cima\n B Para virar para Baixo\n E Para virar para Esquerda\n")
-		opt, _ := userOption.ReadString('\n')
-		fmt.Println(opt)
-		switch opt {
-		case "D\n":
-			game.PacRight()
-		case "C\n":
-			game.PacUp()
-		case "B\n":
-			game.PacDown()
-		case "E\n":
-			game.PacLeft()
-		default:
-			fmt.Println("Informe uma opção valida")
-			time.Sleep(time.Second * 1)
-		}
-		c.Run()
+	for game.RefreshGrid() {
+		// TODO: Sistema de refresh do jogo
 	}
 
 	return "PARABÉNS VOCÊ TERMINOU!!!"
