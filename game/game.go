@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// GameStatus é a estrutura do jogo em execução
-type GameStatus struct {
+// Status é a estrutura do jogo em execução
+type Status struct {
 	DotsInGrid int
 	Grid       [][]string
 	GridLen    struct {
@@ -20,7 +20,7 @@ type GameStatus struct {
 }
 
 // GenerateManStartPosition informa a posição inicial do PacMan
-func (g *GameStatus) GenerateManStartPosition() {
+func (g *Status) GenerateManStartPosition() {
 	rand.Seed(time.Now().UnixNano())
 	xPos := rand.Intn(g.GridLen.X - 1)
 	yPos := rand.Intn(g.GridLen.Y - 1)
@@ -31,12 +31,12 @@ func (g *GameStatus) GenerateManStartPosition() {
 }
 
 // GenerateMonsterStartPosition cria a posição inicial dos monstros no labirinto
-func (g *GameStatus) GenerateMonsterStartPosition() {
+func (g *Status) GenerateMonsterStartPosition() {
 
 }
 
 // RefreshGrid atualiza o grid com as posições de todos os personagens
-func (g *GameStatus) RefreshGrid() (res bool) {
-
-	return
+func (g *Status) RefreshGrid() (res bool) {
+	defer time.Sleep(time.Millisecond * 500)
+	return true
 }

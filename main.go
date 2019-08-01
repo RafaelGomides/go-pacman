@@ -12,9 +12,9 @@ import (
 	"github.com/buger/goterm"
 )
 
-func getGridMap(x, y int) *game.GameStatus {
+func getGridMap(x, y int) *game.Status {
 	rand.Seed(time.Now().UnixNano())
-	newGame := game.GameStatus{}
+	newGame := game.Status{}
 	newGame.GridLen.X = x
 	newGame.GridLen.Y = y
 	for iy := 0; iy < y; iy++ {
@@ -36,10 +36,19 @@ func getGridMap(x, y int) *game.GameStatus {
 	return &newGame
 }
 
-func playGame(game *game.GameStatus) string {
+func playGame(pg *game.Status) string {
 
-	for game.RefreshGrid() {
-		// TODO: Sistema de refresh do jogo
+	for pg.RefreshGrid() {
+		fmt.Println("F0")
+		c := exec.Command("clear")
+		c.Stdout = os.Stdout
+		c.Run()
+		// ATUALIZAÇÃO DOS PONTOS
+		fmt.Printf("Pontos: %v\n", pg.Points)
+		// ATUALIZAÇÃO DO GRID
+		for _, actual := range pg.Grid {
+			fmt.Printf("%s\n", actual)
+		}
 	}
 
 	return "PARABÉNS VOCÊ TERMINOU!!!"
