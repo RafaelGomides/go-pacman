@@ -42,6 +42,7 @@ func getGridMap(x, y int) *game.Status {
 	}
 
 	newGame.GenerateManStartPosition()
+	newGame.GenerateMonsterStartPosition()
 
 	return &newGame
 }
