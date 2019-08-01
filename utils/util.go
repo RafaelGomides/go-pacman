@@ -15,6 +15,8 @@ func ClearScreen() {
 }
 
 // HideCursor esconde o cursor no terminal
+// TODO: Essa é uma função que precisa ser re-visitada para analisar melhor seu
+// comportamento
 func HideCursor() {
 	c := exec.Command("tput civis  -- invisible")
 	c.Stdout = os.Stdout
