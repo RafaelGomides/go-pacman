@@ -3,13 +3,21 @@ package main
 import (
 	"fmt"
 	"go-pacMan/game"
+	u "go-pacMan/utils"
 	"math/rand"
 	"os"
-	"os/exec"
 	"strconv"
 	"time"
 
 	"github.com/buger/goterm"
+	"github.com/mgutz/ansi"
+)
+
+var (
+	normalDots string = ansi.ColorCode("white+h:black")
+	superDots  string = ansi.ColorCode("white+hb:black")
+	blankSpace string = ansi.ColorCode("black:black")
+	reset      string = ansi.ColorCode("reset")
 )
 
 func getGridMap(x, y int) *game.Status {
@@ -22,10 +30,12 @@ func getGridMap(x, y int) *game.Status {
 		for ix := 0; ix < x; ix++ {
 			if rand.Intn(99)%2 == 0 {
 				newGame.DotsInGrid++
-				row = append(row, ".")
+				row = append(row, fmt.Sprintf("%v.%v", normalDots, reset))
+			} else if rand.Intn(99)%10 == 0 {
+				newGame.DotsInGrid = newGame.DotsInGrid + 5
+				row = append(row, fmt.Sprintf("%v*%v", superDots, reset))
 			} else {
-				row = append(row, " ")
-
+				row = append(row, fmt.Sprintf("%v %v", blankSpace, reset))
 			}
 		}
 		newGame.Grid = append(newGame.Grid, row)
@@ -39,15 +49,17 @@ func getGridMap(x, y int) *game.Status {
 func playGame(pg *game.Status) string {
 
 	for pg.RefreshGrid() {
-		fmt.Println("F0")
-		c := exec.Command("clear")
-		c.Stdout = os.Stdout
-		c.Run()
+		u.ClearScreen()
 		// ATUALIZAÇÃO DOS PONTOS
-		fmt.Printf("Pontos: %v\n", pg.Points)
+		lime := ansi.ColorCode("green+h:black")
+		reset := ansi.ColorCode("reset")
+		fmt.Printf("%vPontos: %v\n%v", lime, pg.Points, reset)
 		// ATUALIZAÇÃO DO GRID
-		for _, actual := range pg.Grid {
-			fmt.Printf("%s\n", actual)
+		for _, line := range pg.Grid {
+			for _, dot := range line {
+				fmt.Printf("%s", dot)
+			}
+			fmt.Printf("\n")
 		}
 	}
 
@@ -58,9 +70,11 @@ func main() {
 	xLen := 0
 	yLen := 0
 
+	u.HideCursor()
+
 	if args := os.Args[1:]; len(args) == 0 {
-		yLen = goterm.Height() - 7
-		xLen = goterm.Width() / 2
+		yLen = goterm.Height() - 2
+		xLen = goterm.Width()
 	} else {
 		xLen, _ = strconv.Atoi(args[0])
 		yLen, _ = strconv.Atoi(args[1])
@@ -68,9 +82,7 @@ func main() {
 
 	fmt.Println(xLen, yLen)
 
-	c := exec.Command("clear")
-	c.Stdout = os.Stdout
-	c.Run()
+	u.ClearScreen()
 
 	fmt.Println(playGame(getGridMap(xLen, yLen)))
 }

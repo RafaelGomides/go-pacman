@@ -1,9 +1,17 @@
 package game
 
 import (
+	"fmt"
 	char "go-pacMan/characters"
 	"math/rand"
 	"time"
+
+	"github.com/mgutz/ansi"
+)
+
+var (
+	pacmancolor string = ansi.ColorCode("yellow+hbB:black")
+	reset       string = ansi.ColorCode("reset")
 )
 
 // Status é a estrutura do jogo em execução
@@ -24,7 +32,7 @@ func (g *Status) GenerateManStartPosition() {
 	rand.Seed(time.Now().UnixNano())
 	xPos := rand.Intn(g.GridLen.X - 1)
 	yPos := rand.Intn(g.GridLen.Y - 1)
-	g.Grid[yPos][xPos] = "O"
+	g.Grid[yPos][xPos] = fmt.Sprintf("%vO%v", pacmancolor, reset)
 	g.Pacman = char.NewPacman()
 	g.Pacman.Move.Pos.X = xPos
 	g.Pacman.Move.Pos.Y = yPos
